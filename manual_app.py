@@ -1,36 +1,42 @@
 import streamlit as st
 
-# CONFIGURAÇÃO DA PÁGINA
 st.set_page_config(
-    page_title="Manual Saipos Balança",
+    page_title="Configuração Balança",
     page_icon="⚖️",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-hide_streamlit_style = """
-            <style>
-            #MainMenu {visibility: hidden;}
-            footer {visibility: hidden;}
-            header {visibility: hidden;}
-            .stDeployButton {display:none;}
-            </style>
-            """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+hide_bar = """
+    <style>
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    [data-testid="stHeader"] {
+        visibility: hidden;
+        display: none;
+    }
+    .block-container {
+        padding-top: 1rem;
+    }
+    </style>
+"""
+st.markdown(hide_bar, unsafe_allow_html=True)
 
 # Título Principal
 st.title("⚖️ Assistente de Balanças")
 st.markdown("---")
 
 # NAVEGAÇÃO POR ABAS
-tab_oraculo, tab_mercado, tab_drivers, tab_incomp = st.tabs([
+tab_oraculo, tab_mercado, tab_drivers, tab_incomp, tab_detalhes = st.tabs([
     "📘 Manual Oráculo", 
     "🛠️ Outras Config de Mercado", 
-    "💾 Instalação de Drivers (Guia)",
-    "🚫 Incompatíveis"
+    "💾 Instalação de Drivers",
+    "🚫 Incompatíveis",
+    "ℹ️ Detalhes Técnicos"
 ])
 
-# ABA 1: MANUAL ORÁCULO (Procedimentos Detalhados)
+# ABA 1: MANUAL ORÁCULO
 with tab_oraculo:
     st.header("📋 Procedimentos Oficiais")
     st.caption("Baseado estritamente na documentação interna do Oráculo.")
@@ -95,7 +101,7 @@ with tab_oraculo:
             * **Timeout:** `6` segundos
             """)
 
-# ABA 2: OUTRAS CONFIG DE MERCADO (Alternativas)
+# ABA 2: OUTRAS CONFIG DE MERCADO
 with tab_mercado:
     st.header("🛠️ Configurações Genéricas e Alternativas")
     st.markdown("Use estas opções para marcas que não estão no manual oficial ou quando o padrão falhar.")
@@ -152,49 +158,72 @@ with tab_mercado:
 
     st.divider()
 
-    # MENU RETÁTIL: MAIS OPÇÕES
     with st.expander("❓ Não deu certo? Verifique mais opções (Combinações Extras)"):
-        st.markdown("Teste estas combinações caso as principais falhem. Útil para adaptadores USB antigos ou balanças desconfiguradas.")
+        st.markdown("Teste estas combinações caso as principais falhem.")
         
-        col_alt1, col_alt2, col_alt3 = st.columns(3)
+        st.markdown("### 🎯 Toledo Prix 3 Fit (Variações)")
+        st.caption("Use estas opções se a oficial (4800/PRT2) não funcionar.")
         
-        with col_alt1:
-            st.markdown("### 1. Toledo (8 Bits / Sem Paridade)")
-            st.markdown("*Útil quando o adaptador USB não suporta 7 bits/Par.*")
+        col_prix1, col_prix2, col_prix3 = st.columns(3)
+        
+        with col_prix1:
+            st.markdown("**1. Lenta/Estável (Requer ajuste na balança)**")
+            st.markdown("Na balança, mude C15 para `2400`.")
             st.code("""
-Modelo: Toledo2180 (ou Toledo)
-Baud Rate: 9600
-Data Bits: 8  <-- Mudança
-Parity: None  <-- Mudança
+Modelo: Toledo
+Baud Rate: 2400
+Data Bits: 7
+Parity: Even
 Stop Bits: 1
-Timeout: 6
             """, language="text")
-
-        with col_alt2:
-            st.markdown("### 2. Genéricas (Lentas)")
-            st.markdown("*Para balanças chinesas antigas ou cabos ruins.*")
+            
+        with col_prix2:
+            st.markdown("**2. Rápida (Requer ajuste na balança)**")
+            st.markdown("Na balança, mude C15 para `9600`.")
             st.code("""
-Modelo: Generica
-Baud Rate: 4800 (ou 2400)
+Modelo: Toledo
+Baud Rate: 9600
+Data Bits: 7
+Parity: Even
+Stop Bits: 1
+            """, language="text")
+            
+        with col_prix3:
+            st.markdown("**3. Adaptador Genérico (Ignora Paridade)**")
+            st.markdown("Use se o cabo USB não suportar 7 bits.")
+            st.code("""
+Modelo: Toledo2180
+Baud Rate: 9600
 Data Bits: 8
 Parity: None
 Stop Bits: 1
-Timeout: 6
             """, language="text")
 
-        with col_alt3:
-            st.markdown("### 3. Filizola/Elgin (Variação)")
-            st.markdown("*Alguns modelos antigos da Elgin usam essa config.*")
+        st.divider()
+        st.markdown("### 🔄 Outras Marcas")
+        
+        col_alt1, col_alt2 = st.columns(2)
+        with col_alt1:
+            st.markdown("**Genéricas (Lentas)**")
+            st.code("""
+Modelo: Generica
+Baud Rate: 4800
+Data Bits: 8
+Parity: None
+Stop Bits: 1
+            """, language="text")
+
+        with col_alt2:
+            st.markdown("**Filizola (Lenta)**")
             st.code("""
 Modelo: Filizola
 Baud Rate: 2400
 Data Bits: 8
 Parity: None
 Stop Bits: 1
-Timeout: 6
             """, language="text")
 
-# ABA 3: DRIVERS 
+# ABA 3: DRIVERS
 with tab_drivers:
     st.header("💾 Solução de Problemas: Driver CH340")
     st.warning("⚠️ Sintomas: Erro 'Time Out', 'Communication Error 31' ou a Porta COM não aparece.")
@@ -206,7 +235,7 @@ with tab_drivers:
     - Baixe o driver **CH341SER**.
     - Extraia a pasta em um local fácil (ex: Área de Trabalho).
     """)
-    st.write("") # Espaço em branco
+    st.write("")
     
     st.markdown("""
     **2. Abrir Gerenciador:**
@@ -214,20 +243,20 @@ with tab_drivers:
     - Digite `devmgmt.msc` e dê Enter.
     - Vá em **Outros Dispositivos** ou **Portas (COM e LPT)** e ache o dispositivo com erro (ex: *USB-SERIAL CH340*).
     """)
-    st.write("") 
+    st.write("")
     
     st.markdown("""
     **3. Atualizar Driver:**
     - Clique com o botão **direito** no dispositivo > **Atualizar Driver**.
     - Selecione: **"Procurar drivers no meu computador"**.
     """)
-    st.write("") 
+    st.write("")
     
     st.markdown("""
     **4. Selecionar da Lista (Importante!):**
     - Clique em: **"Permitir que eu escolha em uma lista de drivers disponíveis em meu computador"**.
     """)
-    st.write("") 
+    st.write("")
     
     st.markdown("""
     **5. Usar Disco:**
@@ -235,7 +264,7 @@ with tab_drivers:
     - Clique em **"Procurar..."** e vá até a pasta onde você extraiu o driver.
     - Selecione o arquivo `.inf` e clique em OK.
     """)
-    st.write("") 
+    st.write("")
     
     st.markdown("""
     **6. Finalizar:**
@@ -278,3 +307,74 @@ with tab_incomp:
     st.divider()
     
     st.info("💡 **Orientação Final:** Nesses casos, o cliente deve utilizar a pesagem manual.")
+
+# ABA 5: DETALHES TÉCNICOS (ATUALIZADA)
+with tab_detalhes:
+    st.header("ℹ️ Glossário Técnico: Entendendo o Saipos Balança")
+    st.markdown("Diagnóstico rápido e explicação dos campos.")
+    
+    # DIAGNÓSTICO RÁPIDO
+    st.subheader("1. Diagnóstico de Erros (Peso -9 ou 0)")
+    
+    col_err1, col_err2 = st.columns(2)
+    
+    with col_err1:
+        st.error("📉 **Peso Negativo (-9 ou -9000)**")
+        st.markdown("**Causa: Falha de Comunicação (Física ou Driver).**")
+        st.markdown("""
+        O sistema tentou abrir a porta, mas não achou nada.
+        * **Verifique:**
+            1. Porta COM incorreta (mudou sozinha?).
+            2. Cabo USB desconectado ou com mal contato.
+            3. Driver do cabo parou de funcionar (Windows 11).
+        """)
+        
+    with col_err2:
+        st.warning("0️⃣ **Peso Zerado (0)**")
+        st.markdown("**Causa: Falha de Configuração.**")
+        st.markdown("""
+        A balança está conectada, mas o sistema não entende o que ela fala.
+        * **Verifique:**
+            1. **Protocolo:** Urano fora do `PROT 1` envia lixo (validade/preço).
+            2. **Handshaking:** Deve estar em "Nenhum".
+        """)
+
+    st.divider()
+
+    # GLOSSÁRIO
+    st.subheader("2. Significado dos Campos")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        with st.expander("Modelo Balança (Protocolo)", expanded=False):
+            st.markdown("""
+            **O que é:** É o "idioma" que a balança fala (ex: a Toledo manda `STX 00.500kg`).
+            * **Dica:** Se o peso aparece com caracteres estranhos, o modelo está errado.
+            """)
+            
+        with st.expander("Porta Serial (COM)", expanded=False):
+            st.markdown("""
+            **O que é:** O endereço do USB no Windows (COM1, COM3, etc).
+            * **Importante:** Se trocar o cabo de porta USB, esse número muda!
+            """)
+
+    with col2:
+        with st.expander("Baud Rate (Velocidade)", expanded=False):
+            st.markdown("""
+            **O que é:** Velocidade da transmissão.
+            * **Padrão:** 9600 (maioria), 4800/2400 (Toledo). Se errar, os dados chegam corrompidos.
+            """)
+            
+        with st.expander("Data Bits & Parity", expanded=False):
+            st.markdown("""
+            **Regra de Ouro:**
+            * **Toledo:** 7 Bits / Par (Even).
+            * **Outras:** 8 Bits / Nenhuma (None).
+            """)
+            
+        with st.expander("Timeout Pesagem", expanded=False):
+            st.markdown("""
+            **O que é:** Tempo de espera antes de dar erro.
+            * **Padrão:** 6 segundos. Aumente para balanças velhas.
+            """)
