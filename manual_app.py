@@ -1,7 +1,7 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="Configuração Balança",
+    page_title="Manual Saipos Balança",
     page_icon="⚖️",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -23,20 +23,20 @@ hide_bar = """
 """
 st.markdown(hide_bar, unsafe_allow_html=True)
 
-# Título Principal
 st.title("⚖️ Assistente de Balanças")
 st.markdown("---")
 
-# NAVEGAÇÃO POR ABAS
-tab_oraculo, tab_mercado, tab_drivers, tab_incomp, tab_detalhes = st.tabs([
+# NAVEGAÇÃO
+tab_oraculo, tab_mercado, tab_drivers, tab_incomp, tab_detalhes, tab_modelos = st.tabs([
     "📘 Manual Oráculo", 
     "🛠️ Outras Config de Mercado", 
     "💾 Instalação de Drivers",
     "🚫 Incompatíveis",
-    "ℹ️ Detalhes Técnicos"
+    "ℹ️ Detalhes Técnicos",
+    "📂 Modelos Disponíveis"
 ])
 
-# ABA 1: MANUAL ORÁCULO
+# ABA 1: ORÁCULO
 with tab_oraculo:
     st.header("📋 Procedimentos Oficiais")
     st.caption("Baseado estritamente na documentação interna do Oráculo.")
@@ -109,42 +109,6 @@ with tab_mercado:
     col_a, col_b, col_c, col_d = st.columns(4)
     
     with col_a:
-        st.subheader("Elgin / Filizola")
-        st.caption("Padrão da Linha DP")
-        st.markdown("""
-        * **Modelo:** `Filizola`
-        * **Baud Rate:** `9600`
-        * **Data Bits:** `8`
-        * **Parity:** `None` (Nenhuma)
-        * **Stop Bits:** `1`
-        * **Timeout:** `6` segundos
-        """)
-        
-    with col_b:
-        st.subheader("Urano (Alternativa)")
-        st.caption("Opção de Contorno")
-        st.markdown("""
-        * **Modelo:** `Filizola`
-        * **Baud Rate:** `9600`
-        * **Data Bits:** `8`
-        * **Parity:** `None` (Nenhuma)
-        * **Stop Bits:** `1`
-        * **Timeout:** `6` segundos
-        """)
-
-    with col_c:
-        st.subheader("Genéricas / China")
-        st.caption("Balmak, Ramuza, Micheletti")
-        st.markdown("""
-        * **Modelo:** `Generica`
-        * **Baud Rate:** `9600`
-        * **Data Bits:** `8`
-        * **Parity:** `None` (Nenhuma)
-        * **Stop Bits:** `1`
-        * **Timeout:** `6` segundos
-        """)
-
-    with col_d:
         st.subheader("Toledo (Legado)")
         st.caption("Padrão Antigo")
         st.markdown("""
@@ -156,30 +120,54 @@ with tab_mercado:
         * **Timeout:** `6` segundos
         """)
 
+    with col_b:
+        st.subheader("Urano (Alternativa)")
+        st.caption("Opção de Contorno")
+        st.markdown("""
+        * **Modelo:** `Filizola`
+        * **Baud Rate:** `9600`
+        * **Data Bits:** `8`
+        * **Parity:** `None` (Nenhuma)
+        * **Stop Bits:** `1`
+        * **Timeout:** `6` segundos
+        """)
+        
+    with col_c:
+        st.subheader("Elgin / Filizola")
+        st.caption("Padrão da Linha DP")
+        st.markdown("""
+        * **Modelo:** `Filizola`
+        * **Baud Rate:** `9600`
+        * **Data Bits:** `8`
+        * **Parity:** `None` (Nenhuma)
+        * **Stop Bits:** `1`
+        * **Timeout:** `6` segundos
+        """)
+
+    with col_d:
+        st.subheader("Genéricas")
+        st.caption("Balmak, Ramuza, Micheletti")
+        st.markdown("""
+        * **Modelo:** `Generica`
+        * **Baud Rate:** `9600`
+        * **Data Bits:** `8`
+        * **Parity:** `None` (Nenhuma)
+        * **Stop Bits:** `1`
+        * **Timeout:** `6` segundos
+        """)
+
     st.divider()
 
     with st.expander("❓ Não deu certo? Verifique mais opções (Combinações Extras)"):
         st.markdown("Teste estas combinações caso as principais falhem.")
         
         st.markdown("### 🎯 Toledo Prix 3 Fit (Variações)")
-        st.caption("Use estas opções se a oficial (4800/PRT2) não funcionar.")
         
         col_prix1, col_prix2, col_prix3 = st.columns(3)
         
         with col_prix1:
-            st.markdown("**1. Lenta/Estável (Requer ajuste na balança)**")
-            st.markdown("Na balança, mude C15 para `2400`.")
-            st.code("""
-Modelo: Toledo
-Baud Rate: 2400
-Data Bits: 7
-Parity: Even
-Stop Bits: 1
-            """, language="text")
-            
-        with col_prix2:
-            st.markdown("**2. Rápida (Requer ajuste na balança)**")
-            st.markdown("Na balança, mude C15 para `9600`.")
+            st.markdown("**1. Padrão de Fábrica (Sem Configurar)**")
+            st.markdown("Tente esta se o cliente tirou da caixa agora.")
             st.code("""
 Modelo: Toledo
 Baud Rate: 9600
@@ -187,15 +175,27 @@ Data Bits: 7
 Parity: Even
 Stop Bits: 1
             """, language="text")
-            
-        with col_prix3:
-            st.markdown("**3. Adaptador Genérico (Ignora Paridade)**")
+            st.caption("Se falhar, teste Baud Rate 2400.")
+
+        with col_prix2:
+            st.markdown("**2. Adaptador Genérico**")
             st.markdown("Use se o cabo USB não suportar 7 bits.")
             st.code("""
 Modelo: Toledo2180
 Baud Rate: 9600
 Data Bits: 8
 Parity: None
+Stop Bits: 1
+            """, language="text")
+            
+        with col_prix3:
+            st.markdown("**3. Lenta/Estável (Requer ajuste)**")
+            st.markdown("Na balança, mude C15 para `2400`.")
+            st.code("""
+Modelo: Toledo
+Baud Rate: 2400
+Data Bits: 7
+Parity: Even
 Stop Bits: 1
             """, language="text")
 
@@ -308,12 +308,11 @@ with tab_incomp:
     
     st.info("💡 **Orientação Final:** Nesses casos, o cliente deve utilizar a pesagem manual.")
 
-# ABA 5: DETALHES TÉCNICOS (ATUALIZADA)
+# ABA 5: DETALHES
 with tab_detalhes:
     st.header("ℹ️ Glossário Técnico: Entendendo o Saipos Balança")
     st.markdown("Diagnóstico rápido e explicação dos campos.")
     
-    # DIAGNÓSTICO RÁPIDO
     st.subheader("1. Diagnóstico de Erros (Peso -9 ou 0)")
     
     col_err1, col_err2 = st.columns(2)
@@ -341,7 +340,6 @@ with tab_detalhes:
 
     st.divider()
 
-    # GLOSSÁRIO
     st.subheader("2. Significado dos Campos")
     
     col1, col2 = st.columns(2)
@@ -359,6 +357,17 @@ with tab_detalhes:
             * **Importante:** Se trocar o cabo de porta USB, esse número muda!
             """)
 
+        with st.expander("Data Bits (Tamanho)", expanded=False):
+            st.markdown("""
+            **O que é:** O tamanho do "pacote" de informação que a balança envia por vez.
+            * **7 Bits:** Padrão antigo (Toledo).
+            * **8 Bits:** Padrão moderno (Geral).
+            
+            **Regra de Ouro:**
+            * **Toledo:** Usa **7**.
+            * **Todas as outras:** Usam **8**.
+            """)
+
     with col2:
         with st.expander("Baud Rate (Velocidade)", expanded=False):
             st.markdown("""
@@ -366,15 +375,68 @@ with tab_detalhes:
             * **Padrão:** 9600 (maioria), 4800/2400 (Toledo). Se errar, os dados chegam corrompidos.
             """)
             
-        with st.expander("Data Bits & Parity", expanded=False):
+        with st.expander("Parity (Paridade / Erro)", expanded=False):
             st.markdown("""
+            **O que é:** Método de segurança para checar se a informação chegou corrompida.
+            * **Even (Par):** Verifica se o número de bits é par.
+            * **None (Nenhuma):** Sem verificação.
+            
             **Regra de Ouro:**
-            * **Toledo:** 7 Bits / Par (Even).
-            * **Outras:** 8 Bits / Nenhuma (None).
+            * **Toledo:** Usa **Even (Par)**.
+            * **Todas as outras:** Usam **None (Nenhuma)**.
             """)
             
         with st.expander("Timeout Pesagem", expanded=False):
             st.markdown("""
             **O que é:** Tempo de espera antes de dar erro.
             * **Padrão:** 6 segundos. Aumente para balanças velhas.
+            """)
+
+# ABA 6: MODELOS
+with tab_modelos:
+    st.header("📂 Lista de Modelos Disponíveis")
+    st.markdown("Guia rápido para saber qual opção selecionar na lista 'Modelo Balança' do software.")
+    
+    col_toledo, col_geral = st.columns(2)
+    
+    with col_toledo:
+        st.subheader("🟢 Toledo")
+        st.markdown("Opções específicas para balanças Prix.")
+        
+        st.markdown("""
+        * **Toledo2180:** 🏆 **(Recomendado)** O driver mais moderno e estável para Prix 3, 3 Fit e 4. Melhor tratamento de erros.
+        * **Toledo:** Versão "Legada" (Antiga). Use se a balança estiver com padrão de fábrica (P03).
+        * **Toledo2090 / 2090N:** Para balanças industriais ou modelos específicos da série 2090.
+        * **ToledoBCS21:** Específico para balanças contadoras (BCS).
+        * **ToledoTi420:** Para indicadores de pesagem industrial Ti420.
+        """)
+        
+        st.divider()
+        
+        st.subheader("🔵 Urano")
+        st.markdown("""
+        * **Urano:** Driver padrão. Exige balança configurada em `PROT 1`.
+        * **UranoPOP:** Variação específica para a linha POP (às vezes tem formatação diferente).
+        * **UranoUDC:** Para balanças de checkout (frente de caixa).
+        """)
+
+    with col_geral:
+        st.subheader("🟠 Padrões de Mercado")
+        st.markdown("Drivers compatíveis com múltiplas marcas.")
+        
+        st.markdown("""
+        * **Filizola:** 🛠️ **(O Coringa)**. Além de balanças Filizola, este protocolo é usado pela **Elgin (Linha DP)** e muitas outras nacionais.
+        * **Generica:** Tenta ler qualquer número que chegar na porta. Ideal para **Balmak**, **Ramuza** e balanças importadas da China.
+        """)
+
+        st.divider()
+        
+        st.subheader("🟣 Outras Marcas / Industriais")
+        with st.expander("Ver lista completa de outros modelos"):
+            st.markdown("""
+            * **Weightech (WT1000, WT3000, etc):** Indicadores industriais pesados.
+            * **Micheletti / Alfa:** Marcas nacionais comuns em açougues.
+            * **Magna / LucasTec / Digitron:** Balanças regionais ou específicas.
+            * **Rinnert / Muller / Saturno:** Geralmente equipamentos de chão ou industriais antigos.
+            * **Libratek / Lider / Capital:** Marcas menos frequentes no varejo alimentar.
             """)
